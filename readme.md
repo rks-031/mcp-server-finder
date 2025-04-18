@@ -43,6 +43,11 @@ View the JSON response below
 curl "http://127.0.0.1:8000/search?prompt=web%20search"
 ```
 
+For getting responses in better formatted manner in Powershell (🪟)
+```shell
+(Invoke-RestMethod "http://127.0.0.1:8000/search?prompt=web%20search") | ConvertTo-Json -Depth 5
+```
+
 Example Output:
 ```json
 {
