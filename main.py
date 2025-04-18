@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Query # type: ignore
-import httpx # type: ignore # type: ignore
+from fastapi import FastAPI, Query  # type: ignore
+import httpx  # type: ignore
 
 app = FastAPI()
 
@@ -7,8 +7,10 @@ GITHUB_API = "https://api.github.com/search/repositories"
 HEADERS = {"Accept": "application/vnd.github+json"}
 
 @app.get("/search")
-async def search_mcp(prompt: str = Query(..., description="User prompt to search MCP servers")):
-    query_keywords = f'"mcp server" {prompt}'
+async def search_mcp(prompt: str = Query(..., description="Search query for MCP server-based apps")):
+    # The query looks for repositories that mention "mcp server" + the user's prompt
+    query_keywords = f'{prompt} "mcp server"'
+
     params = {
         "q": query_keywords,
         "sort": "stars",
@@ -26,10 +28,11 @@ async def search_mcp(prompt: str = Query(..., description="User prompt to search
             "description": item["description"]
         }
         for item in data.get("items", [])[:10]
+        if item["description"] and "mcp" in item["description"].lower()
     ]
     return {"results": results}
 
 # 👇 Add this to allow running with `python main.py`
 if __name__ == "__main__":
-    import uvicorn # type: ignore
+    import uvicorn
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
